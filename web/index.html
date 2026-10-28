@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>LFM3 Omni</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237c5cff'/%3E%3Ccircle cx='16' cy='16' r='6' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-4.5-4.5L7 19.5"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6H8l1.5-2h5L16 6h1.5A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13" stroke-width="3"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5A2 2 0 0 0 13.5 4.5h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7 8.5l5-5 5 5M5 15.5v2A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-2"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <a class="brand" href="#talk" aria-label="LFM3 Omni home">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="brand-name">LFM3 Omni</span>
+      <span class="brand-sub">2B · MLX</span>
+    </a>
+    <nav class="tabs" role="tablist" aria-label="Modes">
+      <button role="tab" data-tab="talk" aria-controls="talk">Talk</button>
+      <button role="tab" data-tab="look" aria-controls="look">Look</button>
+      <button role="tab" data-tab="transcribe" aria-controls="transcribe">Transcribe</button>
+      <button role="tab" data-tab="speak" aria-controls="speak">Speak</button>
+    </nav>
+    <div class="status" id="status" role="status" data-state="loading">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="status-text">Loading model…</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Talk -->
+    <section class="panel talk" id="talk" role="tabpanel" hidden>
+      <div class="chat" id="chat">
+        <div class="chat-inner" id="chat-inner">
+          <div class="empty" id="talk-empty">
+            <h1>Talk with it.</h1>
+            <p>One 2B model hears your voice, looks at your photos and answers out loud. Everything runs on this Mac.</p>
+            <div class="chips" id="talk-suggestions">
+              <button class="chip">Tell me one surprising fact about octopuses.</button>
+              <button class="chip">Let's practise ordering coffee in French.</button>
+              <button class="chip">Opowiedz mi krótki żart.</button>
+            </div>
+            <p class="hint"><kbd>Space</kbd> hold to talk · <kbd>Esc</kbd> stop</p>
+          </div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="dock-row">
+          <label class="switch">
+            <input type="checkbox" id="talk-speak" checked>
+            <span class="track" aria-hidden="true"></span>
+            Voice replies
+          </label>
+          <button class="ghost small" id="talk-new"><svg class="icon"><use href="#i-plus"/></svg>New chat</button>
+        </div>
+        <form class="composer" id="talk-form">
+          <button type="button" class="icon-button" id="talk-attach" aria-label="Attach an image"><svg class="icon"><use href="#i-image"/></svg></button>
+          <input type="file" id="talk-file" accept="image/*" hidden>
+          <div class="attachment" id="talk-attachment" hidden>
+            <img alt="Attached image">
+            <button type="button" class="icon-button small" aria-label="Remove image" id="talk-attachment-remove"><svg class="icon"><use href="#i-x"/></svg></button>
+          </div>
+          <textarea id="talk-text" rows="1" placeholder="Message, or hold Space to talk"></textarea>
+          <div class="recording-meta" id="talk-recording" hidden>
+            <span class="rec-dot" aria-hidden="true"></span><span class="rec-time">0:00</span>
+            <button type="button" class="ghost small" id="talk-rec-cancel">Cancel</button>
+          </div>
+          <button type="submit" class="action" id="talk-action" data-mode="mic" aria-label="Talk">
+            <span class="level" aria-hidden="true"></span>
+            <svg class="icon"><use href="#i-mic"/></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Look -->
+    <section class="panel look" id="look" role="tabpanel" hidden>
+      <div class="look-grid">
+        <div class="stage card" id="look-stage">
+          <div class="drop" id="look-drop">
+            <svg class="icon large"><use href="#i-image"/></svg>
+            <strong>Drop a photo or a video</strong>
+            <span>Videos up to 60 s. The model sees 2 frames per second and can hear the soundtrack.</span>
+            <div class="row">
+              <button class="button" id="look-choose"><svg class="icon"><use href="#i-upload"/></svg>Choose file</button>
+              <button class="button secondary" id="look-camera"><svg class="icon"><use href="#i-camera"/></svg>Camera</button>
+            </div>
+          </div>
+          <div class="viewer" id="look-viewer" hidden></div>
+          <div class="camera" id="look-cam" hidden>
+            <video playsinline muted autoplay></video>
+            <div class="row">
+              <button class="button" id="look-capture"><svg class="icon"><use href="#i-camera"/></svg>Capture</button>
+              <button class="button secondary" id="look-cam-cancel">Cancel</button>
+            </div>
+          </div>
+          <input type="file" id="look-file" accept="image/*,video/*" hidden>
+          <div class="stage-bar" id="look-bar" hidden>
+            <span class="meta" id="look-meta"></span>
+            <button class="ghost small" id="look-replace">Replace</button>
+          </div>
+        </div>
+        <div class="qa">
+          <div class="thread" id="look-thread">
+            <div class="empty small" id="look-empty">
+              <h2>Ask about what it sees</h2>
+              <p>Type or say a question. Turn on <em>Answer out loud</em> to hear the reply.</p>
+            </div>
+          </div>
+          <div class="chips" id="look-suggestions"></div>
+          <div class="dock-row">
+            <label class="switch"><input type="checkbox" id="look-speak"><span class="track" aria-hidden="true"></span>Answer out loud</label>
+            <label class="switch" id="look-listen-wrap" hidden><input type="checkbox" id="look-listen" checked><span class="track" aria-hidden="true"></span>Hear the soundtrack</label>
+          </div>
+          <form class="composer" id="look-form">
+            <textarea id="look-text" rows="1" placeholder="Ask about the photo or video"></textarea>
+            <div class="recording-meta" id="look-recording" hidden>
+              <span class="rec-dot" aria-hidden="true"></span><span class="rec-time">0:00</span>
+              <button type="button" class="ghost small" id="look-rec-cancel">Cancel</button>
+            </div>
+            <button type="submit" class="action" id="look-action" data-mode="mic" aria-label="Ask">
+              <span class="level" aria-hidden="true"></span>
+              <svg class="icon"><use href="#i-mic"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transcribe -->
+    <section class="panel column" id="transcribe" role="tabpanel" hidden>
+      <div class="column-inner">
+        <header class="panel-head">
+          <h1>Transcribe</h1>
+          <p>Speech to text in 18 languages, or straight into another language. Long files are cut at pauses into 30 s parts.</p>
+        </header>
+        <div class="card source" id="tr-source">
+          <div class="drop" id="tr-drop">
+            <svg class="icon large"><use href="#i-wave"/></svg>
+            <strong>Drop audio or video</strong>
+            <span>Up to 30 minutes. Or record yourself.</span>
+            <div class="row">
+              <button class="button" id="tr-choose"><svg class="icon"><use href="#i-upload"/></svg>Choose file</button>
+              <button class="button secondary" id="tr-record"><svg class="icon"><use href="#i-mic"/></svg>Record</button>
+            </div>
+          </div>
+          <div class="recorder" id="tr-recorder" hidden>
+            <span class="rec-dot" aria-hidden="true"></span>
+            <span class="rec-time big">0:00</span>
+            <span class="meter" aria-hidden="true"><span></span></span>
+            <button class="button" id="tr-stop"><svg class="icon"><use href="#i-stop"/></svg>Stop</button>
+          </div>
+          <div class="loaded" id="tr-loaded" hidden>
+            <div class="file-line"><svg class="icon"><use href="#i-wave"/></svg><span class="meta" id="tr-meta"></span><button class="ghost small" id="tr-replace">Replace</button></div>
+            <audio controls preload="metadata" id="tr-audio"></audio>
+          </div>
+          <input type="file" id="tr-file" accept="audio/*,video/*" hidden>
+        </div>
+        <div class="controls">
+          <label class="field"><span>Spoken language</span><select id="tr-language"></select></label>
+          <div class="field">
+            <span>Output</span>
+            <div class="segmented" role="radiogroup" aria-label="Output">
+              <label><input type="radio" name="tr-task" value="transcribe" checked><span>Transcript</span></label>
+              <label><input type="radio" name="tr-task" value="translate"><span>Translation</span></label>
+            </div>
+          </div>
+          <label class="field" id="tr-target-field" hidden><span>Into</span><select id="tr-target"></select></label>
+          <button class="button primary push" id="tr-run" disabled>Transcribe</button>
+        </div>
+        <div class="card output" id="tr-output" hidden>
+          <div class="output-head">
+            <span class="progress" id="tr-progress"></span>
+            <div class="row">
+              <button class="icon-button small" id="tr-copy" aria-label="Copy text"><svg class="icon"><use href="#i-copy"/></svg></button>
+              <button class="icon-button small" id="tr-download" aria-label="Download text"><svg class="icon"><use href="#i-download"/></svg></button>
+            </div>
+          </div>
+          <div class="output-text" id="tr-text"></div>
+          <div class="stats" id="tr-stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Speak -->
+    <section class="panel column" id="speak" role="tabpanel" hidden>
+      <div class="column-inner">
+        <header class="panel-head">
+          <h1>Speak</h1>
+          <p>Text to speech in 19 languages and accents, with a female or a male voice. Audio starts while the rest is still being made.</p>
+        </header>
+        <div class="card editor">
+          <textarea id="sp-text" placeholder="Type something to say…" maxlength="5000">Hi! I am LFM3 Omni, a small model from Liquid AI. I can listen, look and talk, and right now I run on this Mac, with no cloud at all.</textarea>
+          <div class="editor-foot">
+            <div class="chips" id="sp-samples">
+              <button class="chip" data-locale="Polish" data-text="Dzień dobry! Mówi do ciebie mały model, który działa w całości na tym komputerze. Bez chmury, bez czekania.">Polish</button>
+              <button class="chip" data-locale="British English" data-text="Right then. The kettle is on, the biscuits are out, and the forecast says light rain until teatime. Nothing unusual.">British</button>
+              <button class="chip" data-locale="German" data-text="Guten Morgen! Heute wird es sonnig und warm, mit leichtem Wind am Nachmittag.">German</button>
+              <button class="chip" data-locale="Japanese" data-text="こんにちは。今日はいい天気ですね。少し散歩に行きましょうか。">Japanese</button>
+            </div>
+            <span class="count" id="sp-count"></span>
+          </div>
+        </div>
+        <div class="controls">
+          <label class="field"><span>Language</span><select id="sp-locale"></select></label>
+          <div class="field">
+            <span>Voice</span>
+            <div class="segmented" role="radiogroup" aria-label="Voice">
+              <label><input type="radio" name="sp-voice" value="female" checked><span>Female</span></label>
+              <label><input type="radio" name="sp-voice" value="male"><span>Male</span></label>
+            </div>
+          </div>
+          <button class="button primary push" id="sp-run"><svg class="icon"><use href="#i-play"/></svg>Speak</button>
+        </div>
+        <div class="card output" id="sp-output" hidden>
+          <div class="output-head">
+            <span class="progress" id="sp-progress"></span>
+            <a class="icon-button small" id="sp-download" download="lfm3-speech.wav" aria-label="Download WAV" hidden><svg class="icon"><use href="#i-download"/></svg></a>
+          </div>
+          <div class="speaking-line" id="sp-live"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="sp-live-text">Speaking…</span></div>
+          <audio controls id="sp-audio" hidden></audio>
+          <div class="stats" id="sp-stats"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="alert" hidden></div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+[project]
+name = "lfm3-mega-demo"
+version = "0.1.0"
+description = "Local demo app for LiquidAI LFM3-Omni-2B on Apple Silicon (MLX)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "mlx-vlm @ git+https://github.com/Blaizzy/mlx-vlm@bf02cd02a39bed39729dddfaa5b601a95a4aff6f",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "python-multipart>=0.0.9",
+    "soundfile>=0.12",
+    "huggingface_hub>=0.30",
+]
+
+[tool.uv]
+package = false
